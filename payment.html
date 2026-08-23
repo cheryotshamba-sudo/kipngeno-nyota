@@ -9,6 +9,7 @@
 <title>NYOTA FUNDS</title>
 
 <style>
+
 *{
     box-sizing:border-box;
 }
@@ -35,6 +36,7 @@ body{
             rgba(255,255,255,0.09),
             rgba(255,255,255,0.035)
         );
+
     padding:22px 18px 18px;
     border-radius:18px;
 
@@ -101,18 +103,32 @@ button{
     width:100%;
     padding:15px;
     margin-top:17px;
-    background:linear-gradient(135deg,#9B35FF,#6C1DCE);
+
+    background:
+        linear-gradient(
+            135deg,
+            #9B35FF,
+            #6C1DCE
+        );
+
     color:white;
     border:none;
     border-radius:11px;
     font-size:16px;
     font-weight:700;
     cursor:pointer;
-    box-shadow:0 10px 30px rgba(137,43,226,0.30);
+
+    box-shadow:
+        0 10px 30px rgba(137,43,226,0.30);
 }
 
 button:hover{
-    background:linear-gradient(135deg,#A844FF,#7625DC);
+    background:
+        linear-gradient(
+            135deg,
+            #A844FF,
+            #7625DC
+        );
 }
 
 button:active{
@@ -155,7 +171,9 @@ button:disabled{
     }
 
 }
+
 </style>
+
 </head>
 
 <body>
@@ -171,26 +189,39 @@ Welcome, <strong><span id="name"></span></strong>
 </p>
 
 <p>
-To continue with your NYOTA Fund application, please complete the processing fee payment below.
+To continue with your NYOTA Fund application,
+please complete the processing fee payment below.
 </p>
 
 <div class="amount" id="feeAmount">
 Processing Fee: KSh 350
 </div>
 
-<label>Full Name</label>
-
-<input type="text" id="fullName" readonly>
-
-<label>M-PESA Phone Number</label>
+<label>
+Full Name
+</label>
 
 <input
-type="tel"
-id="phone"
-placeholder="2547XXXXXXXX">
+    type="text"
+    id="fullName"
+    readonly
+>
 
-<button id="payBtn" onclick="payNow()">
-Pay Processing Fee
+<label>
+M-PESA Phone Number
+</label>
+
+<input
+    type="tel"
+    id="phone"
+    placeholder="2547XXXXXXXX"
+>
+
+<button
+    id="payBtn"
+    onclick="payNow()"
+>
+    Pay Processing Fee
 </button>
 
 <p id="stkMessage"></p>
@@ -201,13 +232,27 @@ Pay Processing Fee
 
 <script>
 
-let applicant = localStorage.getItem("applicantName");
+/*
+====================================================
+APPLICANT INFORMATION
+====================================================
+*/
+
+let applicant =
+    localStorage.getItem("applicantName");
 
 document.getElementById("name").innerHTML =
     applicant || "Applicant";
 
 document.getElementById("fullName").value =
     applicant || "";
+
+
+/*
+====================================================
+PROCESSING FEE
+====================================================
+*/
 
 let processingFee =
     localStorage.getItem("processingFee") || "350";
@@ -217,10 +262,26 @@ document.getElementById("feeAmount").innerHTML =
     Number(processingFee).toLocaleString();
 
 
-async function payNow() {
+/*
+====================================================
+STK PUSH
+====================================================
+*/
+
+async function payNow(){
 
     let phone =
-        document.getElementById("phone").value.trim();
+        document
+            .getElementById("phone")
+            .value
+            .trim();
+
+    let btn =
+        document.getElementById("payBtn");
+
+    /*
+    SAVE CUSTOMER DETAILS
+    */
 
     localStorage.setItem(
         "phoneNumber",
@@ -229,13 +290,17 @@ async function payNow() {
 
     localStorage.setItem(
         "fullName",
-        document.getElementById("fullName").value
+        document
+            .getElementById("fullName")
+            .value
     );
 
-    let btn =
-        document.getElementById("payBtn");
 
-    if (phone === "") {
+    /*
+    CHECK PHONE
+    */
+
+    if(phone === ""){
 
         alert(
             "Please enter your M-PESA phone number."
@@ -244,203 +309,201 @@ async function payNow() {
         return;
     }
 
+
+    /*
+    BUTTON
+    */
+
     btn.innerHTML =
         "Sending STK Push...";
 
     btn.disabled = true;
 
-    try {
 
-        let response = await fetch(
-    "https://kipngeno-nyota-backend.onrender.com/api/payment/stk-push",
-    {
-                method: "POST",
+    try{
 
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
+        /*
+        ====================================================
+        BACKEND STK ENDPOINT
+        ====================================================
+        */
 
-                body: JSON.stringify({
-                    phone: phone,
+        let response =
+            await fetch(
+                "https://kipngeno-nyota-backend.onrender.com/api/payment/stk-push",
+                {
+                    method:"POST",
 
-                    amount:
-                        Number(processingFee)
-                })
-            }
-        );
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            phone:phone,
+
+                            amount:
+                                Number(
+                                    processingFee
+                                )
+
+                        })
+                }
+            );
+
+
+        /*
+        ====================================================
+        READ RESPONSE
+        ====================================================
+        */
 
         let data =
-            await response.json();
+            await response
+                .json()
+                .catch(() => ({}));
+
 
         console.log(
             "STK RESPONSE:",
             data
         );
 
-        if (!response.ok || !data.success) {
-
-            throw new Error(
-                data.message ||
-                "STK Push failed"
-            );
-        }
 
         /*
-         * Paylor returns transactionId.
-         * Our backend also returns it as
-         * checkout_request_id for compatibility.
-         */
+        ====================================================
+        CHECK RESPONSE
+        ====================================================
+        */
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+
+                data.error ||
+                data.message ||
+                "STK Push failed"
+
+            );
+
+        }
+
+
+        /*
+        ====================================================
+        TRANSACTION ID
+        ====================================================
+        */
 
         let transactionId =
             data.transactionId ||
             data.checkout_request_id;
 
-        if (!transactionId) {
+
+        if(!transactionId){
 
             throw new Error(
                 "No Paylor transaction ID received"
             );
+
         }
 
+
+        /*
+        ====================================================
+        SUCCESS MESSAGE
+        ====================================================
+        */
+
         btn.innerHTML =
-    "Processing...";
+            "Processing...";
+
 
         document.getElementById(
             "stkMessage"
         ).innerHTML =
+
             "An M-PESA payment request has been sent to your phone. Please enter your M-PESA PIN to complete the payment.";
+
+
+        /*
+        ====================================================
+        SAVE TRANSACTION ID
+        ====================================================
+        */
+
+        localStorage.setItem(
+            "transactionId",
+            transactionId
+        );
+
+
+        /*
+        ====================================================
+        START PAYMENT CHECK
+        ====================================================
+        */
 
         checkPayment(
             transactionId
         );
 
-    } catch (error) {
+
+    }catch(error){
 
         console.log(
             "PAYMENT ERROR:",
             error
         );
 
+
         alert(
             error.message ||
             "Payment request failed."
         );
 
+
         btn.innerHTML =
             "Pay Processing Fee";
 
         btn.disabled = false;
+
     }
+
 }
 
 
+/*
+====================================================
+PAYMENT STATUS
+====================================================
+*/
+
 async function checkPayment(
     transactionId
-) {
+){
 
-    let interval =
-        setInterval(async () => {
+    /*
+    NOTE:
+    Your current server.js does NOT contain
+    /payment-status yet.
 
-            try {
+    Therefore this function does not call
+    a nonexistent endpoint.
 
-                let response =
-                    await fetch(
-                        "https://kipngeno-nyota-backend.onrender.com/payment-status"
-                        {
-                            method: "POST",
+    The webhook will receive the Paylor
+    payment result on the backend.
+    */
 
-                            headers: {
-                                "Content-Type":
-                                    "application/json"
-                            },
-
-                            body:
-                                JSON.stringify({
-                                    transactionId:
-                                        transactionId
-                                })
-                        }
-                    );
-
-                let result =
-                    await response.json();
-
-                console.log(
-                    "PAYMENT STATUS:",
-                    result
-                );
-
-                if (
-                    !result.success ||
-                    !result.data
-                ) {
-                    return;
-                }
-
-                let payment =
-                    result.data;
-
-                let status =
-                    String(
-                        payment.status || ""
-                    ).toUpperCase();
-
-
-                if (
-                    status === "COMPLETED"
-                ) {
-
-                    clearInterval(
-                        interval
-                    );
-
-                    document.getElementById(
-                        "stkMessage"
-                    ).innerHTML =
-                        "✅ Payment successful. Redirecting...";
-
-                    window.location.href =
-                        "delivery.html";
-                }
-
-
-                else if (
-                    status === "CANCELLED" ||
-                    status === "FAILED"
-                ) {
-
-                    clearInterval(
-                        interval
-                    );
-
-                    document.getElementById(
-                        "stkMessage"
-                    ).innerHTML =
-                        "❌ Payment " +
-                        status.toLowerCase() +
-                        ".";
-
-                    document.getElementById(
-                        "payBtn"
-                    ).disabled = false;
-
-                    document.getElementById(
-                        "payBtn"
-                    ).innerHTML =
-                        "Pay Processing Fee";
-                }
-
-            } catch (error) {
-
-                console.log(
-                    "STATUS ERROR:",
-                    error
-                );
-
-            }
-
-        }, 3000);
+    console.log(
+        "Waiting for Paylor payment callback:",
+        transactionId
+    );
 
 }
 
